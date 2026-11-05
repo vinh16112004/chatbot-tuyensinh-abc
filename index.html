@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Chatbot tư vấn tuyển sinh</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f2f4f7; margin: 0; padding: 20px; }
+    h1 { text-align: center; color: #1f4e79; }
+    #chatbox { max-width: 600px; margin: 0 auto; background: #fff; border: 1px solid #ccc;
+               border-radius: 8px; padding: 15px; height: 420px; overflow-y: auto; }
+    .msg { margin: 8px 0; padding: 10px; border-radius: 8px; max-width: 85%; white-space: pre-line; }
+    .user { background: #d9e8fb; margin-left: auto; text-align: right; }
+    .bot { background: #eeeeee; }
+    #inputArea { max-width: 600px; margin: 10px auto; display: flex; gap: 8px; }
+    #question { flex: 1; padding: 10px; font-size: 16px; }
+    button { padding: 10px 18px; background: #1f4e79; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Chatbot tư vấn tuyển sinh</h1>
+  <div id="chatbox"></div>
+  <div id="inputArea">
+    <input id="question" type="text" placeholder="Nhập câu hỏi, ví dụ: học phí ngành CNTT">
+    <button onclick="sendQuestion()">Gửi</button>
+  </div>
+
+  <script>
+    var knowledge = [];
+    var files = ["1-nganh-hoc.json", "2-hoc-phi.json", "3-hoc-bong.json",
+                 "4-phuong-thuc-xet-tuyen.json", "5-faq.json"];
+
+    // Đọc 5 file JSON khi mở trang
+    async function loadData() {
+      for (var i = 0; i < files.length; i++) {
+        var response = await fetch("data/" + files[i]);
+        var data = await response.json();
+        for (var j = 0; j < data.items.length; j++) {
+          knowledge.push(data.items[j]);
+        }
+      }
+      addMessage("bot", "Xin chào! Bạn cần tư vấn về ngành học, học phí, học bổng hay xét tuyển?");
+    }
+
+    function addMessage(who, text) {
+      var box = document.getElementById("chatbox");
+      var div = document.createElement("div");
+      div.className = "msg " + who;
+      div.textContent = text;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    // Đếm số từ khóa xuất hiện trong câu hỏi, chọn mục có nhiều từ khóa nhất
+    function findAnswer(question) {
+      var q = question.toLowerCase();
+      var bestScore = 0;
+      var bestAnswer = "Xin lỗi, tôi chưa có thông tin về câu hỏi này. Vui lòng liên hệ hotline tuyển sinh.";
+      for (var i = 0; i < knowledge.length; i++) {
+        var score = 0;
+        for (var k = 0; k < knowledge[i].keywords.length; k++) {
+          if (q.indexOf(knowledge[i].keywords[k].toLowerCase()) !== -1) {
+            score++;
+          }
+        }
+        if (score > bestScore) {
+          bestScore = score;
+          bestAnswer = knowledge[i].answer;
+        }
+      }
+      return bestAnswer;
+    }
+
+    function sendQuestion() {
+      var input = document.getElementById("question");
+      var question = input.value.trim();
+      if (question === "") { return; }
+      addMessage("user", question);
+      addMessage("bot", findAnswer(question));
+      input.value = "";
+    }
+
+    document.getElementById("question").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { sendQuestion(); }
+    });
+
+    loadData();
+  </script>
+</body>
+</html>
