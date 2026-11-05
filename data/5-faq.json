@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "keywords": ["nộp hồ sơ", "hạn nộp", "thời gian nộp"],
+      "answer": "Thí sinh nộp hồ sơ trực tuyến trước thời hạn được thông báo trên website tuyển sinh của trường."
+    },
+    {
+      "keywords": ["ký túc xá", "ktx", "chỗ ở"],
+      "answer": "Trường có ký túc xá cho sinh viên. Vui lòng liên hệ phòng công tác sinh viên để đăng ký."
+    },
+    {
+      "keywords": ["hotline", "liên hệ", "số điện thoại"],
+      "answer": "Hotline tư vấn tuyển sinh hoạt động 24/7. Vui lòng xem số điện thoại trên website tuyển sinh."
+    }
+  ]
+}
